@@ -8,6 +8,7 @@
 package bencode
 
 import (
+  "errors"
 	"io"
 )
 
@@ -28,6 +29,20 @@ func Decode(r io.Reader) (data interface{}, err error) {
 		data = jb.Copy()
 	}
 	return
+}
+
+// Decode a map[string]interface{}
+// wraps Decode
+func DecodeMap(r io.Reader) (data map[string]interface{}, err error) {
+	tmp, err := Decode(r)
+  if err != nil {
+    return 
+  }
+  switch tmp.(type) {
+  case map[string]interface{}:
+    return tmp.(map[string]interface{}) , err
+  }
+  return nil, errors.New("value not map[string]interface{}")
 }
 
 type decoder struct {
